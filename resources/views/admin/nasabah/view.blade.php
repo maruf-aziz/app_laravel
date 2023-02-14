@@ -12,10 +12,13 @@
             </div>
         @endif
 
-        <a href="{{ route('nasabah.create') }}" class="btn btn-primary mb-2 li-modal"><i>+</i> Tambah Data</a>
-        {{-- <a href="{{ route('nasabah.create') }}" class="btn btn-primary mb-2"><i>+</i> Tambah Data</a> --}}
+        @can('nasabah-create')
+            <a href="{{ route('nasabah.create') }}" class="btn btn-primary mb-2 li-modal"><i>+</i> Tambah Data</a>
+        @endcan
 
-        <table class="table table-bordered">
+        <a href="{{ url('generate-pdf') }}" class="btn btn-warning">Print</a>
+
+        <table class="table table-bordered yajra-datatable">
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -23,11 +26,14 @@
                     <th scope="col">Email</th>
                     <th scope="col">Telp</th>
                     <th scope="col">Alamat</th>
-                    <th scope="col">Aksi</th>
+                    @if (Gate::check('nasabah-edit') || Gate::check('nasabah-delete'))
+                        <th scope="col">Aksi</th>
+                    @endif
+
                 </tr>
             </thead>
             <tbody>
-                @foreach ($data as $key => $item)
+                {{-- @foreach ($data as $key => $item)
                     <tr>
                         <th scope="row">{{ $key + 1 }}</th>
                         <td>{{ $item->nama_lengkap }}</td>
@@ -40,10 +46,14 @@
                                 Lihat Alamat
                             </button>
                         </td>
+                        @if (Gate::check('nasabah-edit') || Gate::check('nasabah-delete'))
                         <td>
-                            <a href="{{ route('nasabah.edit', $item->id) }}" class="btn btn-success">Edit</a>
-                            {{-- <button class="btn btn-warning">Add emergency concat</button>
-                            <button class="btn btn-info">Add Suami / Istri</button> --}}
+
+                            @can('nasabah-edit')
+                            <a href="{{ route('nasabah.edit', $item->id) }}" class="btn btn-success li-modal">Edit</a>
+                            @endcan
+
+                            @can('nasabah-delete')
                             <form action="{{ route('nasabah.destroy', $item->id) }}" method="post">
                                 @csrf
                                 @method('delete')
@@ -51,7 +61,9 @@
                                 <button class="btn btn-danger"
                                     onclick="return confirm('Apakah Anda Yakin?')">Delete</button>
                             </form>
+                            @endcan
                         </td>
+                        @endif
                     </tr>
 
                     <!-- Modal -->
@@ -74,12 +86,58 @@
                             </div>
                         </div>
                     </div>
-                @endforeach
+                @endforeach --}}
             </tbody>
         </table>
     </div>
 @endsection
 
 @section('script')
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <script type="text/javascript">
+        $(function() {
+
+            var table = $('.yajra-datatable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('nasabah.list') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex'
+                    },
+                    {
+                        data: 'nama_lengkap',
+                        name: 'nama_lengkap'
+                    },
+                    {
+                        data: 'email',
+                        name: 'email'
+                    },
+                    {
+                        data: 'no_telp',
+                        name: 'no_telp'
+                    },
+                    {
+                        data: 'alamat',
+                        name: 'alamat'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: true,
+                        searchable: true
+                    },
+                ]
+            });
+
+        });
+
+        $('.li-modal').on('click', function(e) {
+            e.preventDefault();
+            $('#theModal').modal('show').find('.modal-content').load($(this).attr('href'));
+        });
+    </script>
 @endsection

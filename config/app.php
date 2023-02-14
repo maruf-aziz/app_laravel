@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Facade;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -155,7 +154,6 @@ return [
     */
 
     'providers' => [
-
         /*
          * Laravel Framework Service Providers...
          */
@@ -197,6 +195,7 @@ return [
 
         Collective\Html\HtmlServiceProvider::class,
 
+        Yajra\DataTables\DataTablesServiceProvider::class,
     ],
 
     /*
@@ -210,11 +209,13 @@ return [
     |
     */
 
-    'aliases' => Facade::defaultAliases()->merge([
-        // 'ExampleClass' => App\Example\ExampleClass::class,
+    'aliases' => Facade::defaultAliases()
+        ->merge([
+            // 'ExampleClass' => App\Example\ExampleClass::class,
 
-        'Form' => Collective\Html\FormFacade::class,
-      'Html' => Collective\Html\HtmlFacade::class,
-    ])->toArray(),
-
+            'Form' => Collective\Html\FormFacade::class,
+            'Html' => Collective\Html\HtmlFacade::class,
+            'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+        ])
+        ->toArray(),
 ];

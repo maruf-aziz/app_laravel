@@ -28,6 +28,14 @@ class SuamiIstriController extends Controller
     }
 
     /**
+     * create with id
+     */
+    public function create2($id){
+        
+        return view('admin.suamiistri.add', compact('id'));
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
